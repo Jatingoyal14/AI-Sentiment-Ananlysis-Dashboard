@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sentiment Analysis Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="app-title">
+                    <span class="ai-icon">🤖</span>
+                    AI Sentiment Dashboard
+                </h1>
+                <div class="model-status">
+                    <span class="status-indicator active"></span>
+                    <span class="model-name">Advanced Sentiment Analyzer v2.1</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle btn btn--outline" id="themeToggle">
+                    <span class="theme-icon">🌓</span>
+                    Toggle Theme
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="analyze">
+                    <span class="nav-icon">📊</span>
+                    Real-time Analysis
+                </button>
+                <button class="nav-item" data-tab="batch">
+                    <span class="nav-icon">📋</span>
+                    Batch Analysis
+                </button>
+                <button class="nav-item" data-tab="history">
+                    <span class="nav-icon">📈</span>
+                    Analysis History
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </button>
+            </nav>
+            
+            <div class="sidebar-info">
+                <div class="info-item">
+                    <label>Model Accuracy:</label>
+                    <span>94.2%</span>
+                </div>
+                <div class="info-item">
+                    <label>Training Data:</label>
+                    <span>10M+ texts</span>
+                </div>
+                <div class="info-item">
+                    <label>Languages:</label>
+                    <span>4 supported</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Real-time Analysis Tab -->
+            <div class="tab-content active" id="analyze">
+                <div class="analysis-section">
+                    <div class="input-section">
+                        <div class="input-header">
+                            <h2>Enter Text for Analysis</h2>
+                            <div class="input-tools">
+                                <button class="btn btn--sm btn--secondary" id="clearBtn">Clear</button>
+                                <button class="btn btn--sm btn--secondary" id="sampleBtn">Try Sample</button>
+                            </div>
+                        </div>
+                        
+                        <div class="text-input-container">
+                            <textarea 
+                                id="textInput" 
+                                class="form-control text-input" 
+                                placeholder="Type or paste your text here for real-time sentiment analysis... Try reviews, social media posts, feedback, or any text content!"
+                                rows="6"
+                            ></textarea>
+                            <div class="input-stats">
+                                <span id="wordCount">0 words</span>
+                                <span id="charCount">0 characters</span>
+                                <span id="readingTime">0s reading time</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Processing Indicator -->
+                    <div class="processing-indicator" id="processingIndicator" style="display: none;">
+                        <div class="processing-content">
+                            <div class="spinner"></div>
+                            <span>Analyzing sentiment...</span>
+                        </div>
+                    </div>
+
+                    <!-- Results Dashboard -->
+                    <div class="results-dashboard" id="resultsDashboard" style="display: none;">
+                        <!-- Main Sentiment Card -->
+                        <div class="sentiment-card card">
+                            <div class="card__body">
+                                <h3>Overall Sentiment</h3>
+                                <div class="sentiment-display">
+                                    <div class="sentiment-emoji" id="sentimentEmoji">😐</div>
+                                    <div class="sentiment-details">
+                                        <div class="sentiment-label" id="sentimentLabel">NEUTRAL</div>
+                                        <div class="sentiment-score" id="sentimentScore">0.0</div>
+                                        <div class="confidence-badge">
+                                            <span>Confidence: </span>
+                                            <span id="confidenceScore">0%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visualizations Grid -->
+                        <div class="visualizations-grid">
+                            <!-- Sentiment Meter -->
+                            <div class="viz-card card">
+                                <div class="card__body">
+                                    <h4>Sentiment Meter</h4>
+                                    <div class="chart-container" style="position: relative; height: 200px;">
+                                        <canvas id="sentimentMeter"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Emotion Breakdown -->
+                            <div class="viz-card card">
+                                <div class="card__body">
+                                    <h4>Emotion Analysis</h4>
+                                    <div class="chart-container" style="position: relative; height: 200px;">
+                                        <canvas id="emotionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sentiment Distribution -->
+                            <div class="viz-card card">
+                                <div class="card__body">
+                                    <h4>Sentiment Distribution</h4>
+                                    <div class="chart-container" style="position: relative; height: 200px;">
+                                        <canvas id="distributionChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text Statistics -->
+                            <div class="viz-card card">
+                                <div class="card__body">
+                                    <h4>Text Metrics</h4>
+                                    <div class="metrics-grid">
+                                        <div class="metric">
+                                            <span class="metric-label">Processing Time</span>
+                                            <span class="metric-value" id="processingTime">0ms</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-label">Text Complexity</span>
+                                            <span class="metric-value" id="complexityScore">Low</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-label">Polarity</span>
+                                            <span class="metric-value" id="polarityValue">0.0</span>
+                                        </div>
+                                        <div class="metric">
+                                            <span class="metric-label">Subjectivity</span>
+                                            <span class="metric-value" id="subjectivityValue">0.0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Details -->
+                        <div class="analysis-details card">
+                            <div class="card__body">
+                                <h4>Analysis Breakdown</h4>
+                                <div class="details-content">
+                                    <div class="detail-section">
+                                        <h5>Key Insights</h5>
+                                        <ul id="keyInsights">
+                                            <li>No analysis available yet</li>
+                                        </ul>
+                                    </div>
+                                    <div class="detail-section">
+                                        <h5>Preprocessing Applied</h5>
+                                        <div class="preprocessing-tags" id="preprocessingTags">
+                                            <span class="tag">Text Normalization</span>
+                                            <span class="tag">Tokenization</span>
+                                            <span class="tag">Stop Word Removal</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Export Section -->
+                        <div class="export-section">
+                            <button class="btn btn--primary" id="exportBtn">
+                                <span>📥</span>
+                                Export Analysis
+                            </button>
+                            <button class="btn btn--secondary" id="saveBtn">
+                                <span>💾</span>
+                                Save to History
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Batch Analysis Tab -->
+            <div class="tab-content" id="batch">
+                <div class="batch-section">
+                    <h2>Batch Analysis</h2>
+                    <p>Analyze multiple texts simultaneously</p>
+                    <div class="batch-input">
+                        <textarea 
+                            id="batchInput" 
+                            class="form-control" 
+                            placeholder="Enter multiple texts, each on a new line..."
+                            rows="8"
+                        ></textarea>
+                        <button class="btn btn--primary" id="batchAnalyzeBtn">Analyze Batch</button>
+                    </div>
+                    <div id="batchResults" class="batch-results"></div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-content" id="history">
+                <div class="history-section">
+                    <div class="history-header">
+                        <h2>Analysis History</h2>
+                        <div class="history-controls">
+                            <button class="btn btn--secondary" id="clearHistoryBtn">Clear History</button>
+                            <button class="btn btn--outline" id="exportHistoryBtn">Export All</button>
+                        </div>
+                    </div>
+                    <div id="historyList" class="history-list">
+                        <div class="empty-state">
+                            <span class="empty-icon">📋</span>
+                            <p>No analysis history yet. Start analyzing some text!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings">
+                <div class="settings-section">
+                    <h2>Settings</h2>
+                    <div class="settings-grid">
+                        <div class="setting-group">
+                            <h4>Analysis Settings</h4>
+                            <div class="form-group">
+                                <label class="form-label">Real-time Analysis</label>
+                                <input type="checkbox" id="realtimeToggle" checked>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Analysis Delay (ms)</label>
+                                <input type="range" id="delaySlider" min="100" max="2000" value="500" class="form-control">
+                                <span id="delayValue">500ms</span>
+                            </div>
+                        </div>
+                        
+                        <div class="setting-group">
+                            <h4>Display Settings</h4>
+                            <div class="form-group">
+                                <label class="form-label">Show Confidence Scores</label>
+                                <input type="checkbox" id="confidenceToggle" checked>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Show Emotion Analysis</label>
+                                <input type="checkbox" id="emotionToggle" checked>
+                            </div>
+                        </div>
+
+                        <div class="setting-group">
+                            <h4>Model Information</h4>
+                            <div class="model-info">
+                                <div class="info-row">
+                                    <span>Model Name:</span>
+                                    <span>Advanced Sentiment Analyzer v2.1</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Type:</span>
+                                    <span>Transformer-based Neural Network</span>
+                                </div>
+                                <div class="info-row">
+                                    <span>Last Updated:</span>
+                                    <span>August 15, 2025</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
